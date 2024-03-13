@@ -32,6 +32,7 @@ RUN ansible-playbook playbook.yml -vvv -e 'ansible_python_interpreter=/usr/bin/p
 RUN dnf -y clean all
 RUN rm -fr /var/cache
 
+ADD https://github.com/ome/omero-figure/raw/master/omero_figure/scripts/omero/figure_scripts/Figure_To_Pdf.py $OMERODIR/lib/scripts/omero/figure_scripts/Figure_to_Pdf.py
 ADD https://github.com/ome/omero-scripts/raw/develop/omero/figure_scripts/Split_View_Figure.py $OMERODIR/lib/scripts/omero/figure_scripts/Split_View_Figure.py
 
 RUN curl -L -o /usr/local/bin/dumb-init \
