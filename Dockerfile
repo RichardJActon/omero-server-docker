@@ -6,6 +6,10 @@ RUN dnf -y update
 RUN dnf install -y glibc-langpack-en
 RUN dnf install -y blosc
 
+RUN dnf install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm -y
+RUN dnf config-manager --set-disabled rpmfusion-free-updates
+RUN dnf --enablerepo rpmfusion-free-updates install -y mencoder
+
 ENV LANG en_US.utf-8
 ENV RHEL_FRONTEND=noninteractive
 RUN mkdir /opt/setup
