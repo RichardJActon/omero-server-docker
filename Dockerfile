@@ -29,11 +29,10 @@ RUN ansible-playbook playbook.yml -vvv -e 'ansible_python_interpreter=/usr/bin/p
     -e omero_server_release=$OMERO_VERSION \
     -e omero_server_omego_additional_args="$OMEGO_ADDITIONAL_ARGS"
 
+RUN dnf install -y jq
+
 RUN dnf -y clean all
 RUN rm -fr /var/cache
-
-ADD https://github.com/ome/omero-figure/raw/master/omero_figure/scripts/omero/figure_scripts/Figure_To_Pdf.py $OMERODIR/lib/scripts/omero/figure_scripts/Figure_to_Pdf.py
-ADD https://github.com/ome/omero-scripts/raw/develop/omero/figure_scripts/Split_View_Figure.py $OMERODIR/lib/scripts/omero/figure_scripts/Split_View_Figure.py
 
 RUN curl -L -o /usr/local/bin/dumb-init \
     https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64 && \
@@ -42,7 +41,21 @@ RUN curl -L -o /usr/local/bin/dumb-init \
 ADD entrypoint.sh /usr/local/bin/
 ADD 50-config.py 60-database.sh 99-run.sh /startup/
 
+ADD --chmod=744 ./get-latest-release-figure-scripts.sh /opt/setup/
+RUN ./get-latest-release-figure-scripts.sh $OMERODIR
+
 USER omero-server
+
+#ADD --chown=omero-server:omero-server \
+#    --chmod=644 \
+#    https://github.com/ome/omero-figure/raw/master/omero_figure/scripts/omero/figure_scripts/Figure_To_Pdf.py \
+#    $OMERODIR/lib/scripts/omero/figure_scripts/Figure_To_Pdf.py
+
+ADD --chown=omero-server:omero-server \
+    --chmod=644 \
+    https://github.com/ome/omero-scripts/raw/develop/omero/figure_scripts/Split_View_Figure.py \
+    $OMERODIR/lib/scripts/omero/figure_scripts/Split_View_Figure.py
+
 EXPOSE 4063 4064
 ENV PATH=$PATH:/opt/ice/bin
 
