@@ -5,6 +5,7 @@
         - reportlab
         - markdown
         - omero-figure
+        - omero-cli-transfer[rocrate]==0.6.0
   vars:
     java_versions: ["11"]
     omero_server_database_manage: False
